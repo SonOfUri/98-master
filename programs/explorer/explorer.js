@@ -283,9 +283,9 @@ var resolve_address = async function (address) {
 				!address.match(/^https?:\/\/(www\.)?(copy.sh|topotech.github.io\/interdimensionalcable|isaiahodhner.io|brie.fi\/ng)/) &&
 				!address.match(/^(file|data|blob):\/\//)
 			) {
-				address = "https://web.archive.org/web/2024/" + address;
+				// address = "https://web.archive.org/web/2024/" + address;
 				// address = "https://web.archive.org/web/1998/" + address;
-				// address = address;
+				address = address;
 
 			}
 		}

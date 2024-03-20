@@ -26,7 +26,12 @@
 	<link rel="prefetch" href="/desktop/CREDITS.txt">
 	<link rel="prefetch" href="/programs/notepad/index.html">
 
+
 	<style>
+		/* .folder-view > :nth-child(){
+            display: none;
+        } */
+
 		.custom-components {
 			display: grid;
 			position: fixed;
@@ -73,17 +78,75 @@
 			/* font-size: 10px; */
 			font-size: 10pt;
 			/* background: var(--Background); */
-			color: #000;
+			color: #fff;
 			position: relative;
 			box-sizing: border-box;
 			display: flex;
 			justify-content: center;
-			
+
 			margin: auto;
 		}
 
 		.os-window {
 			z-index: 10000 !important;
+		}
+
+		/* .open-modal {
+			background-color: #5cf9d2;
+			border: none;
+			border-radius: 4px;
+			color: #fff;
+			outline: none;
+			padding: 20px 40px;
+			text-transform: uppercase
+		} */
+
+		/* .open-modal:hover {
+			background-color: #bff2e5
+		} */
+
+
+
+		.modal {
+			/* background-color: #dbd9d9; */
+
+			/* From https://css.glass */
+			background: rgba(255, 255, 255, 0);
+			border-radius: 16px;
+			box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+			backdrop-filter: blur(17.5px);
+			-webkit-backdrop-filter: blur(17.5px);
+			border: 1px solid rgba(255, 255, 255, 0.3);
+
+			display: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 60vw;
+			height: 60vh;
+			padding: 50px;
+			border-radius: 5px;
+			z-index: 100000;
+
+			box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.7);
+		}
+
+		@media screen and (max-width: 400px) {
+			.modal{
+				height: 30vh;
+			}
+		}
+
+		.close-modal {
+			color: #fff;
+			background-color: black;
+			text-decoration: none;
+			float: right;
+			position: absolute;
+			top: 10px;
+			right: 20px;
+			padding: 10px;
 		}
 	</style>
 </head>
@@ -106,8 +169,412 @@
 				<img src="./twitter.png" alt="">
 				<div class="u-title">Twitter</div>
 			</a>
+
+			<a class="show-modal open-modal custom-item">
+				<img src="./meme.png" alt="">
+				<div class="u-title">Memes</div>
+			</a>
 		</div>
 	</div>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+
+	<style>
+		.container-x {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 50px;
+		}
+
+		button {
+			position: relative;
+			display: inline-block;
+			cursor: pointer;
+			outline: none;
+			border: 0;
+			vertical-align: middle;
+			text-decoration: none;
+			background: transparent;
+			padding: 20px 5px;
+			color: #3c376f;
+			font-size: 2rem;
+		}
+
+		button span {
+			position: relative;
+			display: inline-block;
+			transform: translateX(0);
+			transition: transform 0.3s ease;
+		}
+
+		.previous:hover span {
+			transform: translateX(-10px) scale(1.2);
+		}
+
+		.next:hover span {
+			transform: translateX(10px) scale(1.2);
+		}
+
+		.slider-nav ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+		}
+
+		.slider-nav li {
+			display: flex;
+			flex: 2;
+			text-align: center;
+		}
+
+		.img-x {
+			max-width: 100%;
+			display: none;
+			box-shadow: 10px 10px 20px 0 rgba(94, 47, 59, 0.2);
+		}
+
+		img.active {
+			display: block;
+			-webkit-animation: fadeImg 0.8s;
+			animation: fadeImg 0.8s;
+		}
+
+		.slider-nav .arrow {
+			flex: 0 0 15%;
+		}
+
+		.slider-nav a {
+			flex-basis: 100%;
+			display: flex;
+			align-items: center;
+		}
+
+		.slider-nav span {
+			display: block;
+			width: 100%;
+		}
+
+		@-webkit-keyframes fadeImg {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadeImg {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+	</style>
+
+	<style>
+
+
+		/* Slideshow container */
+		.slideshow-container {
+			max-width: 500px;
+			position: relative;
+			margin: auto;
+		}
+
+		/* Hide the images by default */
+		.mySlides {
+			display: none;
+		}
+
+		/* Next & previous buttons */
+		.prev,
+		.next {
+			cursor: pointer;
+			position: absolute;
+			top: 50%;
+			width: auto;
+			margin-top: -22px;
+			padding: 16px;
+			color: white;
+			font-weight: bold;
+			font-size: 18px;
+			transition: 0.6s ease;
+			border-radius: 0 3px 3px 0;
+			user-select: none;
+		}
+
+		/* Position the "next button" to the right */
+		.next {
+			right: 0;
+			border-radius: 3px 0 0 3px;
+		}
+
+		/* On hover, add a black background color with a little bit see-through */
+		.prev:hover,
+		.next:hover {
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		/* Caption text */
+		.text {
+			color: #f2f2f2;
+			font-size: 15px;
+			padding: 8px 12px;
+			position: absolute;
+			bottom: 8px;
+			width: 100%;
+			text-align: center;
+		}
+
+		/* Number text (1/3 etc) */
+		.numbertext {
+			color: #f2f2f2;
+			font-size: 12px;
+			padding: 8px 12px;
+			position: absolute;
+			top: 0;
+		}
+
+		/* The dots/bullets/indicators */
+		.dot {
+			cursor: pointer;
+			height: 15px;
+			width: 15px;
+			margin: 0 2px;
+			background-color: #bbb;
+			border-radius: 50%;
+			display: inline-block;
+			transition: background-color 0.6s ease;
+		}
+
+		.active,
+		.dot:hover {
+			background-color: #717171;
+		}
+
+		/* Fading animation */
+		.fade {
+			animation-name: fade;
+			animation-duration: 1.5s;
+		}
+
+		@keyframes fade {
+			from {
+				opacity: .4
+			}
+
+			to {
+				opacity: 1
+			}
+		}
+	</style>
+
+
+	<div class="modal">
+		<a class="close-modal" href="#">X</a>
+		<!-- Slideshow container -->
+		<div class="slideshow-container">
+
+			<!-- Full-width images with number and caption text -->
+			<div class="mySlides fade">
+				<div class="numbertext">1 / 22</div>
+				<img src="IMG (1).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">2 / 22</div>
+				<img src="IMG (2).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">3 / 22</div>
+				<img src="IMG (3).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">4 / 22</div>
+				<img src="IMG (4).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">5 / 22</div>
+				<img src="IMG (5).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">6 / 22</div>
+				<img src="IMG (6).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">7 / 22</div>
+				<img src="IMG (7).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">8 / 22</div>
+				<img src="IMG (8).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">9 / 22</div>
+				<img src="IMG (9).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">10 / 22</div>
+				<img src="IMG (10).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">11 / 22</div>
+				<img src="IMG (11).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">12 / 22</div>
+				<img src="IMG (12).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">13 / 22</div>
+				<img src="IMG (13).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">14 / 22</div>
+				<img src="IMG (14).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">15 / 22</div>
+				<img src="IMG (15).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">16 / 22</div>
+				<img src="IMG (16).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">17 / 22</div>
+				<img src="IMG (17).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">18 / 22</div>
+				<img src="IMG (18).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">19 / 22</div>
+				<img src="IMG (19).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">20 / 22</div>
+				<img src="IMG (20).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">21 / 22</div>
+				<img src="IMG (21).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			<div class="mySlides fade">
+				<div class="numbertext">22 / 22</div>
+				<img src="IMG (22).jpg" style="width:100%">
+				<div class="text">&nbsp;</div>
+			</div>
+			
+			
+
+			<!-- Next and previous buttons -->
+			<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+			<a class="next" onclick="plusSlides(1)">&#10095;</a>
+		</div>
+		<br>
+
+		<!-- The dots/circles -->
+		<!-- <div style="text-align:center">
+			<span class="dot" onclick="currentSlide(1)"></span>
+			<span class="dot" onclick="currentSlide(2)"></span>
+			<span class="dot" onclick="currentSlide(3)"></span>
+		</div> -->
+
+
+	</div>
+
+	<script>
+		let slideIndex = 1;
+		showSlides(slideIndex);
+
+		// Next/previous controls
+		function plusSlides(n) {
+			showSlides(slideIndex += n);
+		}
+
+		// Thumbnail image controls
+		function currentSlide(n) {
+			showSlides(slideIndex = n);
+		}
+
+		function showSlides(n) {
+			let i;
+			let slides = document.getElementsByClassName("mySlides");
+			let dots = document.getElementsByClassName("dot");
+			if (n > slides.length) { slideIndex = 1 }
+			if (n < 1) { slideIndex = slides.length }
+			for (i = 0; i < slides.length; i++) {
+				slides[i].style.display = "none";
+			}
+			for (i = 0; i < dots.length; i++) {
+				dots[i].className = dots[i].className.replace(" active", "");
+			}
+			slides[slideIndex - 1].style.display = "block";
+			dots[slideIndex - 1].className += " active";
+		}
+	</script>
+
+	<script>
+		var modal = $('.modal');
+		$('.show-modal').click(function () {
+			modal.fadeIn();
+		});
+
+		$('.close-modal').click(function () {
+			modal.fadeOut();
+		});
+	</script>
+
 	<div class="taskbar" style="z-index: 5000;">
 		<button class="start-button toggle" title="Click here to begin.">
 			<img src="images/start.png" /><b>Start</b>
